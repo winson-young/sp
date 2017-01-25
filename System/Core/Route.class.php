@@ -16,21 +16,19 @@ class route
 	/**
 	 * 路由访问
 	 */
-	static function access() {
+	public function access() {
+		if (isset($_SERVER['PATH_INFO'])) {
+			$accessRoute = trim($_SERVER['PATH_INFO'], '/');
 
-		$scriptName = $_SERVER['SCRIPT_NAME'];
-		$requestUrl = $_SERVER['REQUEST_URI'];
-		$accessRoute = trim(str_replace($scriptName, '', $requestUrl, '/'));
-
-		if (!empty($accessRoute)) {
-			$urlSeparator = explode('/', $accessRoute);
-			self::controller = array_shift($accessRoute);
-			if (count($accessRoute)) {
-				self::function = array_shift($accessRoute);
+			if (!empty($accessRoute)) {
+				$urlSeparator = explode('/', $accessRoute);
+				self::$controller = array_shift($urlSeparator);
+				if (count($urlSeparator)) {
+					self::$function = array_shift($urlSeparator);
+				}
+				$this->setGetParam($urlSeparator);
 			}
-			$this->setGetParam($accessRoute);
 		}
-
 	}
 
 	/**
@@ -42,8 +40,6 @@ class route
 		if (empty($accessRoute))
 			return;
 		$accessRoute = _addslashes($accessRoute);
-		$lastParamers = '';
-		$getParamers = arary();
 		foreach ($accessRoute as $keyCount => $paramers) {
 			if ($keyCount % 2) {
 				$getParamers[$lastParamers] = $paramers;
@@ -51,21 +47,7 @@ class route
 				$lastParamers = $paramers;
 			}
 		}
-		if ($getParamers) {
-			$this->mergeGetParamer($getParamers);
-		}
-	}
-
-	/**
-	 * 将路由参数写入全局变量中
-	 * @param array getParamer 路由参数
-	 */
-	private function mergeGetParamer($getParamer) {
-		foreach ($getParamer as $key => $paramer) {
-			if (!isset($_GET[$key])) {
-				$_GET[$key] = $paramer;
-			}
-		}
+		$_GET = array_merge($getParamers, $_GET);
 	}
 			
 }
