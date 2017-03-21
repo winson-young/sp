@@ -16,7 +16,7 @@ class route
 	/**
 	 * 路由访问
 	 */
-	public function access() {
+	public static function access() {
 		if (isset($_SERVER['PATH_INFO'])) {
 			$accessRoute = trim($_SERVER['PATH_INFO'], '/');
 
