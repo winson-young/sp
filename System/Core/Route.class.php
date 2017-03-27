@@ -1,4 +1,6 @@
 <?php
+namespace SP;
+
 /**
  * SP路由类
  */

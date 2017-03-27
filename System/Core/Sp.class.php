@@ -1,4 +1,6 @@
 <?php
+namespace  SP;
+
 /**
  * SP核心类
  */
