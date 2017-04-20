@@ -28,7 +28,7 @@ class route
 				if (count($urlSeparator)) {
 					self::$function = array_shift($urlSeparator);
 				}
-				$this->setGetParam($urlSeparator);
+				self::setGetParam($urlSeparator);
 			}
 		}
 	}
