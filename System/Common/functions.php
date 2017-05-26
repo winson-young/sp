@@ -5,7 +5,7 @@
  * @param string clsssName 类名
  */
 function _autoLoader($class) {
-	$coreClass = SP_CORE_PATH . $class . SP_CLASS_SUFFIX;
+	$coreClass = SP_PATH . $class . PHP_SUFFIX;
 	if (import($coreClass)) {
 		return true;
 	}
