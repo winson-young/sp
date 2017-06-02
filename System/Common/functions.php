@@ -45,3 +45,8 @@ function _addslashes($paramers) {
 		return addslashes($paramers);
 	}
 }
+
+function _getDBConf()
+{
+	return SP_COMMON_PATH.'/config.php';
+}

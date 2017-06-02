@@ -1,36 +1,37 @@
 <?php
-namespace  SP;
 /**
- * Class Model
- * 公共model类
- * 封装部分数据库操作方法
- * @package SP
+ * Created by IntelliJ IDEA.
+ * User: Msi
+ * Date: 2017/4/20 0020
+ * Time: 14:36
  */
+
+namespace SP;
+use SP\DB;
 
 class Model
 {
+	protected static $db;
+	protected static $instance;
+	protected $dbConf;
 	
-	private static $pdo;
+	private function __construct ()
+	{
+		$this->setDbConf();
+		self::$db = DB::getInstance($this->dbConf);
+	}
 	
-	private function __construct(){
-		//code
-	}
-	private function __clone(){
-		//code
-	}
-	/**
-	 * 获取实例化的PDO，单例模式
-	 * @return PDO
-	 */
-	public static function getInstance($dbConf){
-		if(!(self::$pdo instanceof PDO)){
-			$dsn ="mysql:host=".$dbConf['host'].";port=".$dbConf['port'].";dbname=".$dbConf['dbName'].";charset=".$dbConf['charSet'];
-			try {self::$pdo = new PDO($dsn,$dbConf['user'], $dbConf['password'], array(PDO::ATTR_PERSISTENT => true,PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")); //保持长连接
-				self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-			} catch (PDOException $e) {
-				print "Error:".$e->getMessage()."<br/>";
-				die(); }
+	public static function getInstance ()
+	{
+		if (!self::$instance instanceof self)
+		{
+			self::$instance = new self();
 		}
-		return self::$pdo;
+		return self::$instance;
+	}
+	
+	public function setDbConf ()
+	{
+		$this->dbConf = _getDBConf()['DB_CONF'];
 	}
 }
