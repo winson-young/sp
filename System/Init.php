@@ -18,4 +18,5 @@ spl_autoload_register('_autoLoader');
 
 // 项目启动
 require_once SP_PATH . DS . 'Core' . DS . 'Sp.php';
+
 Core\Sp::start();

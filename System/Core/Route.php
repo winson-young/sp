@@ -77,7 +77,7 @@ class Route
         }
 
 		$paramers = _addslashes($paramers);
-		$i = 2;
+		$i = 0;
 		while ($paramers) {
 			$j = $i + 1;
 			if (isset($paramers[$j])) {
