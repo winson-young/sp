@@ -9,12 +9,11 @@ defined('CORE_PATH') OR define('CORE_PATH', SP_PATH . 'Core' . DS);
 // SP公共文件目录
 defined('COMMON_PATH') OR define('COMMON_PATH', SP_PATH . 'Common' . DS);
 // SP类格式
-defined('PHP_SUFFIX') OR define('PHP_SUFFIX', '.php');
+defined('EXT') OR define('EXT', '.php');
 
-// 引入Sp公共函数
+// 引入自动加载类
+require CORE_PATH . 'Loader.php';
 require_once COMMON_PATH . 'functions.php';
-// 自动加载类文件
-spl_autoload_register('_autoLoader');
 
 // 项目启动
 require_once SP_PATH . DS . 'Core' . DS . 'Sp.php';

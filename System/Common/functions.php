@@ -2,10 +2,11 @@
 
 /**
  * 自动加载类
- * @param string clsssName 类名
+ * @param string $class 类名
  */
 function _autoLoader($class) {
-	$coreClass = SP_PATH . $class . PHP_SUFFIX;
+    var_dump($class);
+	$coreClass = SP_PATH . $class . EXT;
 	if (import($coreClass)) {
 		return true;
 	}
@@ -15,7 +16,7 @@ function _autoLoader($class) {
 /**
  * 加载文件
  * 检查文件是否存在
- * @param string fileName 载入完整文件名
+ * @param string $fileName 载入完整文件名
  * @return boolean 载入是否成功
  */
 function import($fileName) {
@@ -29,24 +30,20 @@ function import($fileName) {
 
 /**
  * 数组转义
- * @param string||array paramers 需转义字符或数组
- * @return string||array 转义结果
+ * @param string|array $parameters 需转义字符或数组
+ * @return string|array 转义结果
  */
-function _addslashes($paramers) {
-	if (empty($paramers)) return;
-	if (is_array($paramers)) {
-		foreach ($paramers as $key => $value) {
+function _addSlashes($params) {
+	if (empty($params)) return '';
+	if (is_array($params)) {
+        $slashedParams = array();
+		foreach ($params as $key => $value) {
 			$newKey = addslashes($key);
 			$newValue = addslashes($value);
-			$slashedParamer[$newKey] = $newValue;
+            $slashedParams[$newKey] = $newValue;
 		}
-		return $slashedParamer;
+		return $slashedParams;
 	} else {
-		return addslashes($paramers);
+		return addslashes($params);
 	}
-}
-
-function _getDBConf()
-{
-	return SP_COMMON_PATH.'/config.php';
 }

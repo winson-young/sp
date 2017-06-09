@@ -10,8 +10,11 @@ class Sp
 	/**
 	 * 项目启动
 	 */
-	public static function start() {
+	public static function start()
+    {
 		// 访问路径
 		Route::initRoute();
+        $component = new \Application\Component\IndexComponent();
+        $component->TASK();
 	}
 }

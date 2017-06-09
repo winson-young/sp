@@ -10,30 +10,32 @@ class Route
     /**
      * @desc 缺省控制器名称
      */
-    const controller = 'index';
+    const component = 'index';
 
     /**
      * @desc 缺省方法名称
      */
-    const functions = 'index';
+    const task = 'index';
 
     /**
      * @desc 初始化路由信息
      */
-	public static function initRoute() {
+	public static function initRoute()
+    {
 		// 获取参数
-		$paramers = self::separateParamers();
+        $params = self::separateParameters();
 		// 路由地址获取
-		$paramers = self::getRouteInfo($paramers);
+        $params = self::getRouteInfo($params);
 		// 地址参数化
-		self::parameredPath($paramers);
+		self::mergeParametersToGet($params);
 	}
 
     /**
-     * @desc 分离路由信息;
+     * @desc 分离路由信息
      * @return array
      */
-	private static function separateParamers() {
+	private static function separateParameters()
+    {
         // 分析访问地址
 		if (isset($_SERVER['REQUEST_URI'])) {
 			$accessRoute = trim($_SERVER['REQUEST_URI'], '/');
@@ -46,45 +48,49 @@ class Route
 				return explode('/', $accessRoute);
 			}
 		}
-		return array(self::controller, self::functions);
+		return array(self::component, self::task);
 	}
 
     /**
-     * @desc 获取路由参数;
+     * @desc 获取路由参数
+     * @param $parameters array 参数列表
      * @return array
      */
-	private static function getRouteInfo($paramers) {
+	private static function getRouteInfo($params)
+    {
         // 声明控制器名称
-		define('CONTROLLER', array_shift($paramers));
+		define('COMPONENT', array_shift($params));
 
         // 声明方法名称
-		if (count($paramers)) {
-			define('FUNCTIONS', array_shift($paramers));
+		if (count($params)) {
+			define('FUNCTIONS', array_shift($params));
 		} else {
-			define('FUNCTIONS', 'index');
+			define('FUNCTIONS', self::task);
 		}
 
-		return $paramers;
+		return $params;
 	}
 
     /**
-     * @desc 地址参数化;
+     * @desc 地址参数化
+     * @param $parameters array 去除控制器和任务后的参数列表
      * @return boolean
      */
-	private static function parameredPath($paramers) {
-		if (empty($paramers)) {
+	private static function mergeParametersToGet($params)
+    {
+		if (empty($params)) {
             return false;
         }
 
-		$paramers = _addslashes($paramers);
+        $params = _addSlashes($params);
 		$i = 0;
-		while ($paramers) {
+		while ($params) {
 			$j = $i + 1;
-			if (isset($paramers[$j])) {
-				$_GET[$paramers[$i]] = $paramers[$j];
-				unset($paramers[$j]);
+			if (isset($params[$j])) {
+				$_GET[$params[$i]] = $params[$j];
+				unset($params[$j]);
 			}
-			unset($paramers[$i]);
+			unset($params[$i]);
 			$i += 2;
 		}
         return true;
