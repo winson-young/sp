@@ -11,11 +11,12 @@ defined('COMMON_PATH') OR define('COMMON_PATH', SP_PATH . 'Common' . DS);
 // SP类格式
 defined('EXT') OR define('EXT', '.php');
 
-// 引入自动加载类
-require CORE_PATH . 'Loader.php';
+// 引入函数库
 require_once COMMON_PATH . 'functions.php';
+// 自动加载类
+require_once CORE_PATH . 'Loader.php';
 
-// 项目启动
-require_once SP_PATH . DS . 'Core' . DS . 'Sp.php';
+// 注册自动加载
+\Core\Loader::register();
 
 Core\Sp::start();

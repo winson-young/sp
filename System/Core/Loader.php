@@ -10,16 +10,18 @@ class Loader
      *
      * @var array
      */
-    protected $prefixes = array();
+    protected static $prefixes = array(
+        'Core\\' => array(CORE_PATH),
+    );
 
     /**
      * Register loader with SPL autoloader stack.
      *
      * @return void
      */
-    public function register()
+    public static function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register('Core\\Loader::loadClass', true);
     }
 
     /**
@@ -43,15 +45,15 @@ class Loader
         $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR) . '/';
 
         // initialize the namespace prefix array
-        if (isset($this->prefixes[$prefix]) === false) {
-            $this->prefixes[$prefix] = array();
+        if (isset(self::$prefixes[$prefix]) === false) {
+            self::$prefixes[$prefix] = array();
         }
 
         // retain the base directory for the namespace prefix
         if ($prepend) {
-            array_unshift($this->prefixes[$prefix], $base_dir);
+            array_unshift(self::$prefixes[$prefix], $base_dir);
         } else {
-            array_push($this->prefixes[$prefix], $base_dir);
+            array_push(self::$prefixes[$prefix], $base_dir);
         }
     }
 
@@ -62,7 +64,7 @@ class Loader
      * @return mixed The mapped file name on success, or boolean false on
      * failure.
      */
-    public function loadClass($class)
+    public static function loadClass($class)
     {
         // 当前命名空间前缀
         $prefix = $class;
@@ -73,11 +75,11 @@ class Loader
             // 截取命名空间
             $prefix = substr($class, 0, ++$pos);
 
-            // 截取类名
+            // 声明的类名
             $relative_class = substr($class, $pos);
 
             // try to load a mapped file for the prefix and relative class
-            $mapped_file = $this->loadMappedFile($prefix, $relative_class);
+            $mapped_file = self::loadMappedFile($prefix, $relative_class);
             if ($mapped_file) {
                 return $mapped_file;
             }
@@ -99,15 +101,15 @@ class Loader
      * @return mixed Boolean false if no mapped file can be loaded, or the
      * name of the mapped file that was loaded.
      */
-    protected function loadMappedFile($prefix, $relative_class)
+    protected static function loadMappedFile($prefix, $relative_class)
     {
         // are there any base directories for this namespace prefix?
-        if (isset($this->prefixes[$prefix]) === false) {
+        if (isset(self::$prefixes[$prefix]) === false) {
             return false;
         }
 
         // look through base directories for this namespace prefix
-        foreach ($this->prefixes[$prefix] as $base_dir) {
+        foreach (self::$prefixes[$prefix] as $base_dir) {
 
             // replace the namespace prefix with the base directory,
             // replace namespace separators with directory separators
@@ -120,26 +122,11 @@ class Loader
                 . EXT;
 
             // 如果文件存在则载入
-            if ($this->requireFile($file)) {
+            if (import($file)) {
                 return $file;
             }
         }
 
-        return false;
-    }
-
-    /**
-     * If a file exists, require it from the file system.
-     *
-     * @param string $file The file to require.
-     * @return bool True if the file exists, false if not.
-     */
-    protected function requireFile($file)
-    {
-        if (file_exists($file)) {
-            require $file;
-            return true;
-        }
         return false;
     }
 }
