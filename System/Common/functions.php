@@ -5,7 +5,6 @@
  * @param string $class 类名
  */
 function _autoLoader($class) {
-    var_dump($class);
 	$coreClass = SP_PATH . $class . EXT;
 	if (import($coreClass)) {
 		return true;

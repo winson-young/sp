@@ -3,13 +3,13 @@
 namespace Application\Component;
 
 /**
- * SP路由类
+ * test自动加载类
  */
-class Route
+class TestComponent
 {
     public function index()
     {
-        echo 'index';
+        echo 'test';
     }
 			
 }

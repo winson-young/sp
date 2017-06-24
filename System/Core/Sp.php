@@ -14,7 +14,10 @@ class Sp
     {
 		// 访问路径
 		Route::initRoute();
-        $component = new \Application\Component\IndexComponent();
-        $component->TASK();
+        // 测试自动加载类
+        $task = TASK;
+        $component = '\\' . APP_NAME . '\\Component\\' . COMPONENT . 'Component';
+        $component = new $component();
+        $component->$task();
 	}
 }

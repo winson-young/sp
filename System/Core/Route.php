@@ -8,12 +8,14 @@ namespace Core;
 class Route
 {
     /**
-     * @desc 缺省控制器名称
+     * @desc 缺省组件名称
+     * @var string
      */
-    const component = 'index';
+    const component = 'Index';
 
     /**
-     * @desc 缺省方法名称
+     * @desc 缺省任务名称
+     * @var string
      */
     const task = 'index';
 
@@ -59,13 +61,13 @@ class Route
 	private static function getRouteInfo($params)
     {
         // 声明控制器名称
-		define('COMPONENT', array_shift($params));
+		define('COMPONENT', ucfirst(array_shift($params)));
 
         // 声明方法名称
 		if (count($params)) {
-			define('FUNCTIONS', array_shift($params));
+			define('TASK', array_shift($params));
 		} else {
-			define('FUNCTIONS', self::task);
+			define('TASK', self::task);
 		}
 
 		return $params;

@@ -5,66 +5,86 @@ namespace Core;
 class Loader
 {
     /**
-     * An associative array where the key is a namespace prefix and the value
-     * is an array of base directories for classes in that namespace.
+     * @desc 自动加载带命名空间类规则集
      *
      * @var array
      */
-    protected static $prefixes = array(
-        'Core\\' => array(CORE_PATH),
+    protected $maps = array(
+        'Core\\' => array(CORE_PATH)
     );
 
     /**
-     * Register loader with SPL autoloader stack.
+     * @desc 实例化对象
+     *
+     * @var array
+     */
+    protected static $instance = null;
+
+    /**
+     * @desc 需补全类文件的目录
+     *
+     * @var array
+     */
+    protected $needSubDirectName = array('Component', 'Model');
+
+    /**
+     * @desc 初始化自动加载类
      *
      * @return void
      */
-    public static function register()
+    public function __construct()
     {
-        spl_autoload_register('Core\\Loader::loadClass', true);
+        // 加入项目类自动加载规则
+        $this->addNamespace(APP_NAME . '\\', SP_PATH . DS . APP_NAME . DS);
     }
 
     /**
-     * Adds a base directory for a namespace prefix.
+     * @desc 注册自动加载方法
      *
-     * @param string $prefix The namespace prefix.
-     * @param string $base_dir A base directory for class files in the
-     * namespace.
-     * @param bool $prepend If true, prepend the base directory to the stack
-     * instead of appending it; this causes it to be searched first rather
-     * than last.
      * @return void
      */
-    public function addNamespace($prefix, $base_dir, $prepend = false)
+    public function register()
     {
-        // normalize namespace prefix
+        spl_autoload_register(array($this, 'loadClass'), true);
+    }
+
+    /**
+     * @desc 增加自动加载的命名空间规则
+     *
+     * @param string $prefix 命名空间前缀
+     * @param string $baseDir 命名空间所指向的目录
+     * @param bool $prepend 优先级, 决定该目录是否优先被搜索
+     * @return void
+     */
+    public function addNamespace($prefix, $baseDir, $prepend = false)
+    {
+        // 格式化命名空间前缀书写
         $prefix = trim($prefix, '\\') . '\\';
 
-        // normalize the base directory with a trailing separator
-        $base_dir = rtrim($base_dir, '/') . DIRECTORY_SEPARATOR;
-        $base_dir = rtrim($base_dir, DIRECTORY_SEPARATOR) . '/';
+        // 格式化目录书写
+        $baseDir = rtrim($baseDir, '/') . DS;
+        $baseDir = rtrim($baseDir, DS) . '/';
 
-        // initialize the namespace prefix array
-        if (isset(self::$prefixes[$prefix]) === false) {
-            self::$prefixes[$prefix] = array();
+        // 初始化命名空间规则集
+        if (isset($this->maps[$prefix]) === false) {
+            $this->maps[$prefix] = array();
         }
 
-        // retain the base directory for the namespace prefix
+        // 根据优先级插入规则集
         if ($prepend) {
-            array_unshift(self::$prefixes[$prefix], $base_dir);
+            array_unshift($this->maps[$prefix], $baseDir);
         } else {
-            array_push(self::$prefixes[$prefix], $base_dir);
+            array_push($this->maps[$prefix], $baseDir);
         }
     }
 
     /**
-     * Loads the class file for a given class name.
+     * @desc 自动加载方法
      *
-     * @param string $class The fully-qualified class name.
-     * @return mixed The mapped file name on success, or boolean false on
-     * failure.
+     * @param string $class 类名
+     * @return bool|string 成功则返回文件路径, 非则返回false
      */
-    public static function loadClass($class)
+    public function loadClass($class)
     {
         // 当前命名空间前缀
         $prefix = $class;
@@ -76,50 +96,41 @@ class Loader
             $prefix = substr($class, 0, ++$pos);
 
             // 声明的类名
-            $relative_class = substr($class, $pos);
+            $relativeClass = substr($class, $pos);
 
-            // try to load a mapped file for the prefix and relative class
-            $mapped_file = self::loadMappedFile($prefix, $relative_class);
+            // 尝试在命名空间规则中加载文件
+            $mapped_file = $this->loadMappedFile($prefix, $relativeClass);
             if ($mapped_file) {
                 return $mapped_file;
             }
 
-            // remove the trailing namespace separator for the next iteration
-            // of strrpos()
+            // 去除右命名空间分隔符, 以免死循环
             $prefix = rtrim($prefix, '\\');
         }
 
-        // never found a mapped file
+        // 加载失败
         return false;
     }
 
     /**
-     * Load the mapped file for a namespace prefix and relative class.
+     * @desc 根据命名空间规则集获取文件目录并加载文件
      *
-     * @param string $prefix The namespace prefix.
-     * @param string $relative_class The relative class name.
-     * @return mixed Boolean false if no mapped file can be loaded, or the
-     * name of the mapped file that was loaded.
+     * @param string $prefix 命名空间前缀
+     * @param string $relativeClass 类名
+     * @return string|bool 如果没有此文件则返回false, 有则返回文件路径
      */
-    protected static function loadMappedFile($prefix, $relative_class)
+    protected function loadMappedFile($prefix, $relativeClass)
     {
-        // are there any base directories for this namespace prefix?
-        if (isset(self::$prefixes[$prefix]) === false) {
+        // 没有此命名空间的规则集
+        if (isset($this->maps[$prefix]) === false) {
             return false;
         }
 
-        // look through base directories for this namespace prefix
-        foreach (self::$prefixes[$prefix] as $base_dir) {
+        // 搜索规则集中是否存在此文件
+        foreach ($this->maps[$prefix] as $baseDir) {
 
-            // replace the namespace prefix with the base directory,
-            // replace namespace separators with directory separators
-            // in the relative class name, append with .php
-            $file = $base_dir
-                . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)
-                . EXT;
-            $file = $base_dir
-                . str_replace('\\', '/', $relative_class)
-                . EXT;
+            // 拼接文件路径
+            $file = $baseDir . str_replace('\\', DS, $relativeClass) . EXT;
 
             // 如果文件存在则载入
             if (import($file)) {
