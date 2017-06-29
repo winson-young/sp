@@ -9,12 +9,14 @@ class Route
 {
     /**
      * @desc 缺省组件名称
+     *
      * @var string
      */
     const component = 'Index';
 
     /**
      * @desc 缺省任务名称
+     *
      * @var string
      */
     const task = 'index';
@@ -34,27 +36,43 @@ class Route
 
     /**
      * @desc 分离路由信息
+     *
      * @return array
      */
 	private static function separateParameters()
     {
         // 分析访问地址
-		if (isset($_SERVER['REQUEST_URI'])) {
-			$accessRoute = trim($_SERVER['REQUEST_URI'], '/');
-            $pathInfo = pathinfo($accessRoute);
-            // 摒除后缀
-            if (isset($pathInfo['extension'])) {
-                $accessRoute = str_replace('.' . $pathInfo['extension'], '', $accessRoute);
-            }
-			if (!empty($accessRoute)) {
-				return explode('/', $accessRoute);
-			}
-		}
+        $accessRoute = self::getAccessRoute();
+        $pathInfo    = pathinfo($accessRoute);
+        // 摒除后缀
+        if (isset($pathInfo['extension'])) {
+            $accessRoute = str_replace('.' . $pathInfo['extension'], '', $accessRoute);
+        }
+        if (!empty($accessRoute)) {
+            return explode('/', $accessRoute);
+        }
 		return array(self::component, self::task);
 	}
 
     /**
      * @desc 获取路由参数
+     *
+     * @return string
+     */
+    private static function getAccessRoute()
+    {
+        // 判断php运行方式来获取路由参数
+        if (PHP_SAPI === 'cli') {
+            $args = array_slice($_SERVER['argv'], 1);
+            return $args ? implode('/', $args) : '';
+        } else {
+            return isset($_SERVER['REQUEST_URI']) ? trim($_SERVER['REQUEST_URI'], '/') : '';
+        }
+    }
+
+    /**
+     * @desc 获取路由参数
+     *
      * @param $parameters array 参数列表
      * @return array
      */
@@ -75,6 +93,7 @@ class Route
 
     /**
      * @desc 地址参数化
+     *
      * @param $parameters array 去除控制器和任务后的参数列表
      * @return boolean
      */
