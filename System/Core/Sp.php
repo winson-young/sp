@@ -17,7 +17,14 @@ class Sp
         // 测试自动加载类
         $task      = self::getTask();
         $component = self::getComponent();
-        call_user_func(array(new $component, $task));
+	    if (method_exists((new $component), $task) || method_exists($component, $task))
+	    {
+		    call_user_func(array(new $component, $task));
+	    }else{
+	    	showError([
+	    		'msg'   =>  $component.'里面不存在'.$task.'方法不存在'
+		    ]);
+	    }
 	}
 
     /**

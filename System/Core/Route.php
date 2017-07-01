@@ -30,7 +30,7 @@ class Route
         $params = self::separateParameters();
 		// 路由地址获取
         $params = self::getRouteInfo($params);
-		// 地址参数化
+	    // 地址参数化
 		self::mergeParametersToGet($params);
 	}
 
@@ -64,7 +64,7 @@ class Route
         // 判断php运行方式来获取路由参数
         if (PHP_SAPI === 'cli') {
             $args = array_slice($_SERVER['argv'], 1);
-            return $args ? implode('/', $args) : '';
+	        return $args ? implode('/', $args) : '';
         } else {
             return isset($_SERVER['REQUEST_URI']) ? trim($_SERVER['REQUEST_URI'], '/') : '';
         }
@@ -102,17 +102,24 @@ class Route
 		if (empty($params)) {
             return false;
         }
-
-        $params = _addSlashes($params);
-		$i = 0;
-		while ($params) {
-			$j = $i + 1;
-			if (isset($params[$j])) {
-				$_GET[$params[$i]] = $params[$j];
-				unset($params[$j]);
-			}
-			unset($params[$i]);
-			$i += 2;
+        
+	    $params = _addSlashes($params);
+//		$i = 0;
+//		while ($params) {
+//			$j = $i + 1;
+//			if (isset($params[$j])) {
+//				$_GET[$params[$i]] = $params[$j];
+//				unset($params[$j]);
+//			}
+//			unset($params[$i]);
+//			$i += 2;
+//		}
+		foreach ($params as $key => &$item)
+		{
+			$next = current($params);
+			$_GET[$item] = $next;
+			unset($params[$key]);
+			unset($params[array_search($next, $params, true)]);
 		}
         return true;
 	}
