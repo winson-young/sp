@@ -104,23 +104,17 @@ class Route
         }
         
 	    $params = _addSlashes($params);
-//		$i = 0;
-//		while ($params) {
-//			$j = $i + 1;
-//			if (isset($params[$j])) {
-//				$_GET[$params[$i]] = $params[$j];
-//				unset($params[$j]);
-//			}
-//			unset($params[$i]);
-//			$i += 2;
-//		}
-		foreach ($params as $key => &$item)
-		{
-			$next = current($params);
-			$_GET[$item] = $next;
-			unset($params[$key]);
-			unset($params[array_search($next, $params, true)]);
-		}
+		while ($params) {
+		    $value = current($params);
+		    $key   = key($params);
+            $nextValue = next($params);
+            $nextKey   = key($params);
+            if ($nextKey !== $key) {
+                $_GET[$value] = $nextValue;
+            }
+            unset($params[$key]);
+            unset($params[$nextKey]);
+        }
         return true;
 	}
 			

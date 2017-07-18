@@ -14,20 +14,6 @@ class Loader
     );
 
     /**
-     * @desc 实例化对象
-     *
-     * @var array
-     */
-    protected static $instance = null;
-
-    /**
-     * @desc 需补全类文件的目录
-     *
-     * @var array
-     */
-    protected $needSubDirectName = array('Component', 'Model');
-
-    /**
      * @desc 初始化自动加载类
      *
      * @return void
@@ -62,8 +48,7 @@ class Loader
         $prefix = trim($prefix, '\\') . '\\';
 
         // 格式化目录书写
-        $baseDir = rtrim($baseDir, '/') . DS;
-        $baseDir = rtrim($baseDir, DS) . '/';
+        $baseDir = rtrim($baseDir, DS) . DS;
 
         // 初始化命名空间规则集
         if (isset($this->maps[$prefix]) === false) {
