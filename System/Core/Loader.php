@@ -78,10 +78,10 @@ class Loader
         while (false !== $pos = strrpos($prefix, '\\')) {
 
             // 截取命名空间
-            $prefix = substr($class, 0, ++$pos);
+            $prefix = substr($class, 0, $pos + 1);
 
             // 声明的类名
-            $relativeClass = substr($class, $pos);
+            $relativeClass = substr($class, $pos + 1);
 
             // 尝试在命名空间规则中加载文件
             $mapped_file = $this->loadMappedFile($prefix, $relativeClass);
