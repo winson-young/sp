@@ -10,8 +10,7 @@ class Sp
 	/**
 	 * 项目启动
 	 */
-	public static function start()
-    {
+	public static function start() {
 		// 访问路径
 		Route::initRoute();
         // 测试自动加载类
@@ -24,8 +23,7 @@ class Sp
      *
      * @return string
      */
-    private static function getComponent()
-    {
+    private static function getComponent() {
         return '\\' . APP_NAME . '\\Component\\' . COMPONENT . 'Component';
     }
 }

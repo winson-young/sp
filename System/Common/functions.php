@@ -1,18 +1,6 @@
 <?php
 
 /**
- * 自动加载类
- * @param string $class 类名
- */
-function _autoLoader($class) {
-	$coreClass = SP_PATH . $class . EXT;
-	if (import($coreClass)) {
-		return true;
-	}
-	return false;
-}
-
-/**
  * 加载文件
  * 检查文件是否存在
  * @param string $fileName 载入完整文件名
@@ -28,21 +16,11 @@ function import($fileName) {
 }
 
 /**
- * 数组转义
+ * 数组转义 不转移数组下标
  * @param string|array $parameters 需转义字符或数组
  * @return string|array 转义结果
  */
-function _addSlashes($params) {
-	if (empty($params)) return '';
-	if (is_array($params)) {
-        $slashedParams = array();
-		foreach ($params as $key => $value) {
-			$newKey = addslashes($key);
-			$newValue = addslashes($value);
-            $slashedParams[$newKey] = $newValue;
-		}
-		return $slashedParams;
-	} else {
-		return addslashes($params);
-	}
+function deepAddSlashes($params) {
+	if (empty($params)) return $params;
+    return is_array($params) ? array_map('deepAddSlashes', $params) : addslashes($params);
 }

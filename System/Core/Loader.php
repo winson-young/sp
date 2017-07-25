@@ -18,8 +18,7 @@ class Loader
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         // 加入项目类自动加载规则
         $this->addNamespace(APP_NAME . '\\', SP_PATH . DS . APP_NAME . DS);
     }
@@ -29,8 +28,7 @@ class Loader
      *
      * @return void
      */
-    public function register()
-    {
+    public function register() {
         spl_autoload_register(array($this, 'loadClass'), true);
     }
 
@@ -42,8 +40,7 @@ class Loader
      * @param bool $prepend 优先级, 决定该目录是否优先被搜索
      * @return void
      */
-    public function addNamespace($prefix, $baseDir, $prepend = false)
-    {
+    public function addNamespace($prefix, $baseDir, $prepend = false) {
         // 格式化命名空间前缀书写
         $prefix = trim($prefix, '\\') . '\\';
 
@@ -69,8 +66,7 @@ class Loader
      * @param string $class 类名
      * @return bool|string 成功则返回文件路径, 非则返回false
      */
-    public function loadClass($class)
-    {
+    public function loadClass($class) {
         // 当前命名空间前缀
         $prefix = $class;
 
@@ -104,8 +100,7 @@ class Loader
      * @param string $relativeClass 类名
      * @return string|bool 如果没有此文件则返回false, 有则返回文件路径
      */
-    protected function loadMappedFile($prefix, $relativeClass)
-    {
+    protected function loadMappedFile($prefix, $relativeClass) {
         // 没有此命名空间的规则集
         if (isset($this->maps[$prefix]) === false) {
             return false;
