@@ -58,6 +58,11 @@ class Route
 		return $defaultParam;
 	}
 
+    /**
+     * @desc 处理query字符串为对应数组
+     * @param $query string 链接的query字符串 a=1&b=2
+     * @return array
+     */
 	private static function query($query) {
         $data = array();
         if (!empty($query)) {
@@ -77,6 +82,12 @@ class Route
         return $data;
     }
 
+    /**
+     * @desc 组合以斜杠分隔的参数以及query参数
+     * @param $defaultParam array 默认参数
+     * @param $query array query参数
+     * @return array
+     */
 	private static function completeParam($defaultParam, $query) {
         $count = count($defaultParam);
         if (1 === $count) {
@@ -87,7 +98,7 @@ class Route
     }
 
     /**
-     * @desc 获取路由参数
+     * @desc 获取原始路由参数
      *
      * @return string
      */

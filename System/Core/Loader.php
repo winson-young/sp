@@ -35,9 +35,9 @@ class Loader
     /**
      * @desc 增加自动加载的命名空间规则
      *
-     * @param string $prefix 命名空间前缀
-     * @param string $baseDir 命名空间所指向的目录
-     * @param bool $prepend 优先级, 决定该目录是否优先被搜索
+     * @param $prefix string 命名空间前缀
+     * @param $baseDir string 命名空间所指向的目录
+     * @param $prepend bool 优先级, 决定该目录是否优先被搜索
      * @return void
      */
     public function addNamespace($prefix, $baseDir, $prepend = false) {
@@ -63,7 +63,7 @@ class Loader
     /**
      * @desc 自动加载方法
      *
-     * @param string $class 类名
+     * @param $class string 类名
      * @return bool|string 成功则返回文件路径, 非则返回false
      */
     public function loadClass($class) {
@@ -96,8 +96,8 @@ class Loader
     /**
      * @desc 根据命名空间规则集获取文件目录并加载文件
      *
-     * @param string $prefix 命名空间前缀
-     * @param string $relativeClass 类名
+     * @param $prefix string 命名空间前缀
+     * @param $relativeClass string 类名
      * @return string|bool 如果没有此文件则返回false, 有则返回文件路径
      */
     protected function loadMappedFile($prefix, $relativeClass) {

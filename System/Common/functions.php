@@ -3,7 +3,7 @@
 /**
  * 加载文件
  * 检查文件是否存在
- * @param string $fileName 载入完整文件名
+ * @param $fileName string 载入完整文件名
  * @return boolean 载入是否成功
  */
 function import($fileName) {
@@ -17,7 +17,7 @@ function import($fileName) {
 
 /**
  * 数组转义 不转移数组下标
- * @param string|array $parameters 需转义字符或数组
+ * @param $parameters string|array 需转义字符或数组
  * @return string|array 转义结果
  */
 function deepAddSlashes($params) {
