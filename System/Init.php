@@ -18,10 +18,7 @@ require_once COMMON_PATH . 'functions.php';
 // 自动加载类
 require_once CORE_PATH . 'Loader.php';
 
-set_error_handler('exceptionErrorHandler', E_ALL);
-
 // 注册自动加载
-$autoLoader = new \Core\Loader();
-$autoLoader->register();
+(new \Core\Loader())->register();
 
 Core\Sp::start();
