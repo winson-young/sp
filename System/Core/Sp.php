@@ -19,7 +19,7 @@ class Sp
 	}
 
     /**
-     * @desc 获取组件类名
+     * 获取组件类名
      *
      * @return string
      */

@@ -8,14 +8,14 @@ namespace Core;
 class Route
 {
     /**
-     * @desc 缺省组件名称
+     * 缺省组件名称
      *
      * @var string
      */
     const component = 'Index';
 
     /**
-     * @desc 缺省任务名称
+     * 缺省任务名称
      *
      * @var string
      */
@@ -34,7 +34,7 @@ class Route
 	}
 
     /**
-     * @desc 分离路由信息
+     * 分离路由信息
      *
      * @return array
      */
@@ -59,8 +59,10 @@ class Route
 	}
 
     /**
-     * @desc 处理query字符串为对应数组
+     * 处理query字符串为对应数组
+     *
      * @param $query string 链接的query字符串 a=1&b=2
+     *
      * @return array
      */
 	private static function query($query) {
@@ -83,9 +85,11 @@ class Route
     }
 
     /**
-     * @desc 组合以斜杠分隔的参数以及query参数
+     * 组合以斜杠分隔的参数以及query参数
+     *
      * @param $defaultParam array 默认参数
      * @param $query array query参数
+     *
      * @return array
      */
 	private static function completeParam($defaultParam, $query) {
@@ -98,7 +102,7 @@ class Route
     }
 
     /**
-     * @desc 获取原始路由参数
+     * 获取原始路由参数
      *
      * @return string
      */
@@ -113,9 +117,10 @@ class Route
     }
 
     /**
-     * @desc 获取路由参数
+     * 获取路由参数
      *
      * @param $parameters array 参数列表
+     *
      * @return array
      */
 	private static function route($params) {
@@ -133,9 +138,10 @@ class Route
 	}
 
     /**
-     * @desc 地址参数化
+     * 地址参数化
      *
      * @param $parameters array 去除控制器和任务后的参数列表
+     *
      * @return boolean
      */
 	private static function merge($params) {
