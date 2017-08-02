@@ -2,7 +2,7 @@
 
 namespace Core\Interfaces;
 
-interface Cache
+interface CacheInterface
 {
     /**
      * 设置缓存
