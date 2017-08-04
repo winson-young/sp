@@ -44,17 +44,18 @@ class Route
         $route    = self::originalRoute();
         $pathInfo = pathinfo($route);
         // 摒除后缀
+        $query = array();
         if (isset($pathInfo['extension'])) {
             $route = str_replace('.' . $pathInfo['extension'], '', $route);
+            if (($pos = strpos($pathInfo['extension'], '?')) !== false) {
+                $query = substr($pathInfo['extension'], -(strlen($pathInfo['extension']) - $pos - 1));
+                $query = self::query($query);
+            }
         }
         if (!empty($route)) {
             $defaultParam = explode('/', $route);
         }
-        if (($pos = strpos($pathInfo['extension'], '?')) !== false) {
-            $query = substr($pathInfo['extension'], -(strlen($pathInfo['extension']) - $pos - 1));
-            $query = self::query($query);
-            $defaultParam = self::completeParam($defaultParam, $query);
-        }
+        $defaultParam = self::completeParam($defaultParam, $query);
 		return $defaultParam;
 	}
 

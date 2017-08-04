@@ -5,6 +5,15 @@ namespace Core\Interfaces;
 interface CacheInterface
 {
     /**
+     * 连接缓存
+     *
+     * @param $options array 连接需要的信息
+     *
+     * @return mixed
+     */
+    public function connect($options);
+
+    /**
      * 设置缓存
      *
      * @param $key string key值
@@ -12,7 +21,7 @@ interface CacheInterface
      *
      * @return boolean 是否设置成功
      */
-    public function set($key, $expiredSecond);
+    public function set($key, $value, $expiredSecond);
 
     /**
      * 获取缓存
