@@ -4,6 +4,9 @@ namespace Core;
 
 class Loader
 {
+
+    protected static $instance;
+
     /**
      * 自动加载带命名空间类规则集
      *
@@ -14,22 +17,29 @@ class Loader
     );
 
     /**
-     * 初始化自动加载类
+     * 禁止外部实例化
      *
      * @return void
      */
-    public function __construct() {
-        // 加入项目类自动加载规则
-        $this->addNamespace(APP_NAME . '\\', SP_PATH . DS . APP_NAME . DS);
-    }
+    protected function __construct() {}
 
     /**
-     * 注册自动加载方法
+     * 禁止外部克隆
      *
      * @return void
      */
-    public function register() {
-        spl_autoload_register(array($this, 'loadClass'), true);
+    protected function __clone() {}
+
+    /**
+     * 实例化
+     *
+     * @return Loader
+     */
+    public static function instance() {
+        if (!is_object(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     /**
