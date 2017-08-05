@@ -8,14 +8,14 @@ namespace Core;
 class Route
 {
     /**
-     * @desc 缺省组件名称
+     * 缺省组件名称
      *
      * @var string
      */
     const component = 'Index';
 
     /**
-     * @desc 缺省任务名称
+     * 缺省任务名称
      *
      * @var string
      */
@@ -24,43 +24,90 @@ class Route
     /**
      * @desc 初始化路由信息
      */
-	public static function initRoute()
-    {
+	public static function initRoute() {
 		// 获取参数
-        $params = self::separateParameters();
+        $params = self::parameter();
 		// 路由地址获取
-        $params = self::getRouteInfo($params);
+        $params = self::route($params);
 	    // 地址参数化
-		self::mergeParametersToGet($params);
+		self::merge($params);
 	}
 
     /**
-     * @desc 分离路由信息
+     * 分离路由信息
      *
      * @return array
      */
-	private static function separateParameters()
-    {
+	private static function parameter() {
+        $defaultParam = array(self::component, self::task);
         // 分析访问地址
-        $accessRoute = self::getAccessRoute();
-        $pathInfo    = pathinfo($accessRoute);
+        $route    = self::originalRoute();
+        $pathInfo = pathinfo($route);
         // 摒除后缀
+        $query = array();
         if (isset($pathInfo['extension'])) {
-            $accessRoute = str_replace('.' . $pathInfo['extension'], '', $accessRoute);
+            $route = str_replace('.' . $pathInfo['extension'], '', $route);
+            if (($pos = strpos($pathInfo['extension'], '?')) !== false) {
+                $query = substr($pathInfo['extension'], -(strlen($pathInfo['extension']) - $pos - 1));
+                $query = self::query($query);
+            }
         }
-        if (!empty($accessRoute)) {
-            return explode('/', $accessRoute);
+        if (!empty($route)) {
+            $defaultParam = explode('/', $route);
         }
-		return array(self::component, self::task);
+        $defaultParam = self::completeParam($defaultParam, $query);
+		return $defaultParam;
 	}
 
     /**
-     * @desc 获取路由参数
+     * 处理query字符串为对应数组
+     *
+     * @param $query string 链接的query字符串 a=1&b=2
+     *
+     * @return array
+     */
+	private static function query($query) {
+        $data = array();
+        if (!empty($query)) {
+            $query = explode('&', $query);
+            foreach ($query as $value) {
+                if (false !== ($pos = strpos($value, '='))) {
+
+                    $left  = substr($value, 0, $pos);
+
+                    $length = strlen($value);
+                    $right = ($length - $pos) > 1 ? substr($value, -(strlen($value) - $pos - 1)) : '';
+
+                    array_push($data, $left, $right);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * 组合以斜杠分隔的参数以及query参数
+     *
+     * @param $defaultParam array 默认参数
+     * @param $query array query参数
+     *
+     * @return array
+     */
+	private static function completeParam($defaultParam, $query) {
+        $count = count($defaultParam);
+        if (1 === $count) {
+            $defaultParam[] = self::task;
+        }
+        array_splice($defaultParam, 2, 0, $query);
+        return $defaultParam;
+    }
+
+    /**
+     * 获取原始路由参数
      *
      * @return string
      */
-    private static function getAccessRoute()
-    {
+    private static function originalRoute() {
         // 判断php运行方式来获取路由参数
         if (PHP_SAPI === 'cli') {
             $args = array_slice($_SERVER['argv'], 1);
@@ -71,13 +118,13 @@ class Route
     }
 
     /**
-     * @desc 获取路由参数
+     * 获取路由参数
      *
      * @param $parameters array 参数列表
+     *
      * @return array
      */
-	private static function getRouteInfo($params)
-    {
+	private static function route($params) {
         // 声明控制器名称
 		define('COMPONENT', ucfirst(array_shift($params)));
 
@@ -92,35 +139,29 @@ class Route
 	}
 
     /**
-     * @desc 地址参数化
+     * 地址参数化
      *
      * @param $parameters array 去除控制器和任务后的参数列表
+     *
      * @return boolean
      */
-	private static function mergeParametersToGet($params)
-    {
+	private static function merge($params) {
 		if (empty($params)) {
             return false;
         }
-        
-	    $params = _addSlashes($params);
-//		$i = 0;
-//		while ($params) {
-//			$j = $i + 1;
-//			if (isset($params[$j])) {
-//				$_GET[$params[$i]] = $params[$j];
-//				unset($params[$j]);
-//			}
-//			unset($params[$i]);
-//			$i += 2;
-//		}
-		foreach ($params as $key => &$item)
-		{
-			$next = current($params);
-			$_GET[$item] = $next;
-			unset($params[$key]);
-			unset($params[array_search($next, $params, true)]);
-		}
+
+	    $params = deepAddSlashes($params);
+		while ($params) {
+		    $value = current($params);
+		    $key   = key($params);
+            $nextValue = next($params);
+            $nextKey   = key($params);
+            if ($nextKey !== $key) {
+                $_GET[$value] = $nextValue;
+            }
+            unset($params[$key]);
+            unset($params[$nextKey]);
+        }
         return true;
 	}
 			
