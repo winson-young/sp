@@ -15,10 +15,11 @@ class IndexComponent extends Basic
         var_dump($this->fastCache->get('winson'));
         var_dump($this->fastCache->delete('winson'));
         var_dump($this->fastCache->get('winson'));*/
-        var_dump($this->slowestCache->set('winson', 'win', 0));
-        var_dump($this->slowestCache->get('winson'));
-        /*var_dump($this->slowestCache->delete('winson'));
-        var_dump($this->slowestCache->get('winson'));*/
+        //var_dump($this->slowCache->set('winson', 'win', 2));
+        //var_dump($this->slowCache->set('winson', 'win', 3));
+        //var_dump($this->slowCache->get('winson'));
+        /*var_dump($this->slowCache->delete('winson'));
+        var_dump($this->slowCache->get('winson'));*/
     }
 			
 }

@@ -15,7 +15,7 @@ $container->set('fastCache', function () {
 });
 
 // File
-$container->set('slowestCache', function () {
+$container->set('slowCache', function () {
     return new File(array(
         'path' => SP_PATH . APP_NAME . DS . 'Cache'
     ));
