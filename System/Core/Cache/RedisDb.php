@@ -31,7 +31,7 @@ class RedisDb implements CacheInterface
      *
      * @param $options array 连接需要的信息
      */
-    public function connect($options) {
+    protected function connect($options) {
         $this->Redis = new Redis();
         if (!isset($options['timeOut']) || !($options['timeOut'] > 0)) $options['timeOut'] = 0;
         if ($this->Redis->connect($options['ip'], $options['port'], $options['timeOut'])) {
@@ -44,7 +44,7 @@ class RedisDb implements CacheInterface
      *
      * @return resource
      */
-    public function redis() {
+    private function redis() {
         return $this->Redis;
     }
 
