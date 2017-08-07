@@ -10,6 +10,8 @@ defined('SYSTEM_PATH') OR define('SYSTEM_PATH', SP_PATH . 'System' . DS);
 defined('CORE_PATH')   OR define('CORE_PATH', SYSTEM_PATH . 'Core' . DS);
 // SP公共文件目录
 defined('COMMON_PATH') OR define('COMMON_PATH', SYSTEM_PATH . 'Common' . DS);
+// SP配置文件目录
+defined('CONFIG_PATH') OR define('CONFIG_PATH', SYSTEM_PATH . 'Config' . DS);
 // SP类格式
 defined('EXT')         OR define('EXT', '.php');
 
@@ -20,5 +22,8 @@ require_once CORE_PATH . 'Loader.php';
 
 // 注册自动加载
 (new \Core\Loader())->register();
+
+// 加载依赖注入服务配置
+require_once CONFIG_PATH . 'Service.php';
 
 Core\Sp::start();

@@ -5,7 +5,7 @@ namespace Core;
 class Loader
 {
     /**
-     * @desc 自动加载带命名空间类规则集
+     * 自动加载带命名空间类规则集
      *
      * @var array
      */
@@ -14,7 +14,7 @@ class Loader
     );
 
     /**
-     * @desc 初始化自动加载类
+     * 初始化自动加载类
      *
      * @return void
      */
@@ -24,7 +24,7 @@ class Loader
     }
 
     /**
-     * @desc 注册自动加载方法
+     * 注册自动加载方法
      *
      * @return void
      */
@@ -33,11 +33,12 @@ class Loader
     }
 
     /**
-     * @desc 增加自动加载的命名空间规则
+     * 增加自动加载的命名空间规则
      *
      * @param $prefix string 命名空间前缀
      * @param $baseDir string 命名空间所指向的目录
      * @param $prepend bool 优先级, 决定该目录是否优先被搜索
+     *
      * @return void
      */
     public function addNamespace($prefix, $baseDir, $prepend = false) {
@@ -61,9 +62,10 @@ class Loader
     }
 
     /**
-     * @desc 自动加载方法
+     * 自动加载方法
      *
      * @param $class string 类名
+     *
      * @return bool|string 成功则返回文件路径, 非则返回false
      */
     public function loadClass($class) {
@@ -73,10 +75,7 @@ class Loader
         // 通过类名查找已映射的文件名
         while (false !== $pos = strrpos($prefix, '\\')) {
 
-            // 截取命名空间
             $prefix = substr($class, 0, $pos + 1);
-
-            // 声明的类名
             $relativeClass = substr($class, $pos + 1);
 
             // 尝试在命名空间规则中加载文件
@@ -85,23 +84,21 @@ class Loader
                 return $mapped_file;
             }
 
-            // 去除右命名空间分隔符, 以免死循环
             $prefix = rtrim($prefix, '\\');
         }
 
-        // 加载失败
         return false;
     }
 
     /**
-     * @desc 根据命名空间规则集获取文件目录并加载文件
+     * 根据命名空间规则集获取文件目录并加载文件
      *
      * @param $prefix string 命名空间前缀
      * @param $relativeClass string 类名
+     *
      * @return string|bool 如果没有此文件则返回false, 有则返回文件路径
      */
     protected function loadMappedFile($prefix, $relativeClass) {
-        // 没有此命名空间的规则集
         if (isset($this->maps[$prefix]) === false) {
             return false;
         }
@@ -109,10 +106,8 @@ class Loader
         // 搜索规则集中是否存在此文件
         foreach ($this->maps[$prefix] as $baseDir) {
 
-            // 拼接文件路径
             $file = $baseDir . str_replace('\\', DS, $relativeClass) . EXT;
 
-            // 如果文件存在则载入
             if (import($file)) {
                 return $file;
             }
