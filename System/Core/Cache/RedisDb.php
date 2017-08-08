@@ -72,7 +72,7 @@ class RedisDb implements CacheInterface
     /**
      * 获取缓存
      *
-     * @param $key string|array 支持多个key
+     * @param $key string
      *
      * @return mixed key对应的缓存
      */
@@ -81,9 +81,7 @@ class RedisDb implements CacheInterface
             return false;
         }
 
-        // 是否一次取多个值
-        $get    = is_array($key) ? 'mGet': 'get';
-        return $this->redis()->{$get}($key);
+        return $this->redis()->get($key);
     }
 
     /**

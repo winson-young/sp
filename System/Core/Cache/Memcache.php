@@ -61,6 +61,7 @@ class MemcacheDb implements CacheInterface
         }
 
         if ($expiredSecond > 0) {
+            // memcache最多缓存2592000秒
             $expiredSecond = $expiredSecond >  2592000 ?  2592000 : $expiredSecond;
         } else {
             $expiredSecond = 0;
@@ -71,7 +72,7 @@ class MemcacheDb implements CacheInterface
     /**
      * 获取缓存
      *
-     * @param $key string|array 支持多个key
+     * @param $key string
      *
      * @return mixed key对应的缓存
      */
@@ -80,9 +81,7 @@ class MemcacheDb implements CacheInterface
             return false;
         }
 
-        // 是否一次取多个值
-        $get    = is_array($key) ? 'mGet': 'get';
-        return $this->redis()->{$get}($key);
+        return $this->memcache()->get($key);
     }
 
     /**
@@ -97,6 +96,6 @@ class MemcacheDb implements CacheInterface
             return false;
         }
 
-        return $this->redis()->delete($key);
+        return $this->memcache()->delete($key);
     }
 }
