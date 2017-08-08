@@ -3,16 +3,16 @@
 namespace Core\Cache;
 
 use Core\Interfaces\CacheInterface as CacheInterface;
-use \Redis;
+use \Memcache;
 
-class RedisDb implements CacheInterface
+class MemcacheDb implements CacheInterface
 {
     /**
-     * redis资源
+     * memcache资源
      *
      * @var resource
      */
-    private $Redis;
+    private $Memcache;
 
     /**
      * 是否已成功连接
@@ -22,7 +22,7 @@ class RedisDb implements CacheInterface
     private $connected = false;
 
     public function __construct($options) {
-        // 连接redis
+        // 连接memcache
         $this->connect($options);
     }
 
@@ -32,20 +32,19 @@ class RedisDb implements CacheInterface
      * @param $options array 连接需要的信息
      */
     protected function connect($options) {
-        $this->Redis = new Redis();
-        if (!isset($options['timeOut']) || !($options['timeOut'] > 0)) $options['timeOut'] = 0;
-        if ($this->Redis->connect($options['ip'], $options['port'], $options['timeOut'])) {
-            $this->connected = true;
+        $this->Memcache = new Memcache();
+        if (isset($options['ip']) && isset($options['port'])) {
+            $this->connected = $this->Memcache->connect($options['ip'], $options['port']);
         }
     }
 
     /**
-     * 获取redis资源
+     * 获取memcache资源
      *
      * @return resource
      */
-    private function redis() {
-        return $this->Redis;
+    private function memcache() {
+        return $this->Memcache;
     }
 
     /**
@@ -61,12 +60,13 @@ class RedisDb implements CacheInterface
             return false;
         }
 
-        // 永不超时
         if ($expiredSecond > 0) {
-            return $this->redis()->setex($key, $expiredSecond, $value);
+            // memcache最多缓存2592000秒
+            $expiredSecond = $expiredSecond >  2592000 ?  2592000 : $expiredSecond;
         } else {
-            return $this->redis()->set($key, $value);
+            $expiredSecond = 0;
         }
+        return $this->memcache()->add($key, $value, false, $expiredSecond);
     }
 
     /**
@@ -81,7 +81,7 @@ class RedisDb implements CacheInterface
             return false;
         }
 
-        return $this->redis()->get($key);
+        return $this->memcache()->get($key);
     }
 
     /**
@@ -96,6 +96,6 @@ class RedisDb implements CacheInterface
             return false;
         }
 
-        return $this->redis()->delete($key);
+        return $this->memcache()->delete($key);
     }
 }
