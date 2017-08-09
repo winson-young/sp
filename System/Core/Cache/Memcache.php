@@ -2,10 +2,10 @@
 
 namespace Core\Cache;
 
-use Core\Interfaces\CacheInterface as CacheInterface;
+use Core\Interfaces\CacheInterface as Cache;
 use \Memcache;
 
-class MemcacheDb implements CacheInterface
+class MemcacheDb implements Cache
 {
     /**
      * memcache资源
