@@ -22,7 +22,12 @@ class IndexComponent extends Basic
         var_dump($this->slowCache->get('winson'));
         $memcached = new \Memcache;
         var_dump($memcached);exit;*/
-        $this->localDb->test('test');
+        $result = $this->localDb->find([
+            'column' => ['customers_id', 'customers_nickname'],
+            'table' => 'customers',
+            'where' => 'customers_id = 8041'
+        ]);
+        var_dump($result);exit;
     }
 			
 }
