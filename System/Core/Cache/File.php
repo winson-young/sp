@@ -2,9 +2,9 @@
 
 namespace Core\Cache;
 
-use Core\Interfaces\CacheInterface as Cache;
+use Core\Interfaces\CacheInterface;
 
-class File implements Cache
+class File implements CacheInterface
 {
 
     /**

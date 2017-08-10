@@ -2,10 +2,10 @@
 
 namespace Core\Cache;
 
-use Core\Interfaces\CacheInterface as Cache;
+use Core\Interfaces\CacheInterface;
 use \Redis;
 
-class RedisDb implements Cache
+class RedisDb implements CacheInterface
 {
     /**
      * redis资源

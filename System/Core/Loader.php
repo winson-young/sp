@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Core\Common\General;
+
 class Loader
 {
 
@@ -118,7 +120,7 @@ class Loader
 
             $file = $baseDir . str_replace('\\', DS, $relativeClass) . EXT;
 
-            if (import($file)) {
+            if (General::import($file)) {
                 return $file;
             }
         }

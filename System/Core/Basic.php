@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Core\Container as Container;
+use Core\Container;
 
 /**
  * SP基类

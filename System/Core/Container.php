@@ -6,15 +6,35 @@ use \Exception;
 
 class Container
 {
-    // 非共享服务集合
+    /**
+     * 非共享服务集合
+     *
+     * @var array
+     */
     protected $service = [];
-    // 共享服务集合
+
+    /**
+     * 共享服务集合
+     *
+     * @var array
+     */
     protected $sharedService = [];
 
+    /**
+     * 储存容器对象
+     *
+     * @var object
+     */
     private static $instance;
 
+    /**
+     * Container constructor.
+     */
     private function __construct() {}
 
+    /**
+     * Container clone.
+     */
     private function __clone() {}
 
     public static function instance() {
@@ -50,14 +70,12 @@ class Container
     {
         if (isset($this->service[$name])) {
             $definition = $this->service[$name];
-        } else {
-            throw new Exception("Service '" . $name . "' wasn't found in the dependency injection container");
+            if (is_object($definition)) {
+                $instance = call_user_func($definition);
+                return $instance;
+            }
         }
 
-        if (is_object($definition)) {
-            $instance = call_user_func($definition);
-        }
-
-        return $instance;
+        throw new Exception("Service '" . $name . "' wasn't found in the dependency injection container");
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Application\Component;
 
-use Core\Basic as Basic;
+use Core\Basic;
 
 /**
  * test自动加载类
@@ -22,7 +22,7 @@ class IndexComponent extends Basic
         var_dump($this->slowCache->get('winson'));
         $memcached = new \Memcache;
         var_dump($memcached);exit;*/
-        var_dump($this->db);
+        $this->localDb->test('test');
     }
 			
 }

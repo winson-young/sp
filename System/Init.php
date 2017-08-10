@@ -16,12 +16,13 @@ defined('CONFIG_PATH') OR define('CONFIG_PATH', SYSTEM_PATH . 'Config' . DS);
 defined('EXT')         OR define('EXT', '.php');
 
 // 引入函数库
-require_once COMMON_PATH . 'functions' . EXT;
+require_once COMMON_PATH . 'General' . EXT;
+
 // 自动加载类
 require_once CORE_PATH . 'Loader' . EXT;
 
 // 注册自动加载
-spl_autoload_register('loadClass', true);
+spl_autoload_register(array('Core\Common\General', 'loadClass'), true);
 
 // 自动加载配置
 require_once CONFIG_PATH . 'Loader' . EXT;
