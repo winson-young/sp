@@ -39,6 +39,13 @@ class Statement
     protected $table;
 
     /**
+     * 插入值
+     *
+     * @var array
+     */
+    protected $value = [];
+
+    /**
      * @var Connection
      */
     protected $connection;
@@ -76,7 +83,7 @@ class Statement
      * @param array $columns 字段集合
      */
     protected function setColumns(array $columns) {
-        $this->columns = $columns;
+        $this->columns = array_merge($this->columns, array_values($columns));
     }
 
     /**
@@ -98,12 +105,21 @@ class Statement
     }
 
     /**
+     * 设置插入值
+     *
+     * @param $value array 插入值
+     */
+    protected function setValue(array $value) {
+        $this->value = array_merge($this->value, array_values($value));
+    }
+
+    /**
      * 获取字段
      *
-     * @return string
+     * @return array
      */
     protected function getColumns() {
-        return implode(', ', $this->columns);
+        return $this->columns;
     }
 
     /**
@@ -122,6 +138,15 @@ class Statement
      */
     protected function getTable() {
         return $this->table;
+    }
+
+    /**
+     * 获取插入值
+     *
+     * @return array
+     */
+    protected function getValue() {
+        return $this->value;
     }
 
     /**

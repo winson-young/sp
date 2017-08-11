@@ -22,8 +22,19 @@ class IndexComponent extends Basic
         var_dump($this->slowCache->get('winson'));
         $memcached = new \Memcache;
         var_dump($memcached);exit;*/
-        $result = $this->localDb->find([
+        /*$result = $this->localDb->select([
             'column' => ['customers_id', 'customers_nickname'],
+            'table' => 'customers',
+            'where' => 'customers_id = 8041'
+        ]);*/
+        $result = $this->localDb->save([
+            'column' => ['customers_firstname'],
+            'value' => ['update_firstname'],
+            'table' => 'customers',
+            'where' => 'customers_id = 8041'
+        ]);
+        $result = $this->localDb->save([
+            'data' => ['customers_firstname' => 'dataupdate'],
             'table' => 'customers',
             'where' => 'customers_id = 8041'
         ]);

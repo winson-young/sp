@@ -5,7 +5,7 @@ namespace Core\Database\Statement;
 use Core\Database\Statement;
 use Core\Database\Connection;
 
-class FindStatement extends Statement
+class SaveStatement extends Statement
 {
     /**
      * Constructor
@@ -33,6 +33,25 @@ class FindStatement extends Statement
     }
 
     /**
+     * 设置插入值
+     *
+     * @param array $value 插入值
+     */
+    private function value(array $value) {
+        $this->setValue($value);
+    }
+
+    /**
+     * 设置插入数据
+     *
+     * @param array $data 插入数据
+     */
+    private function data(array $data) {
+        $this->setColumns(array_keys($data));
+        $this->setValue(array_values($data));
+    }
+
+    /**
      * 设置条件
      *
      * @param string $where 条件表达式
@@ -51,21 +70,24 @@ class FindStatement extends Statement
     }
 
     /**
-     * 获取字段
-     *
-     * @return string
-     */
-    protected function getColumns() {
-        return implode(', ', parent::getColumns());
-    }
-
-    /**
      * 生成sql
      */
     protected function makeSql() {
         $columns = $this->getColumns();
         if (empty($columns)) {
             echo 'Missing columns for insertion';
+            exit;
+        }
+
+        $values = $this->getValue();
+        if (empty($values)) {
+            echo 'Missing value for insertion';
+            exit;
+        }
+
+        // 字段与修改值数量是否对应
+        if (count($columns) !== count($values)) {
+            echo 'Columns\' number not equal to value';
             exit;
         }
 
@@ -76,7 +98,12 @@ class FindStatement extends Statement
         }
 
         // 生成sql语句
-        $this->sql = 'SELECT ' . $columns . ' FROM ' . $table;
+        $this->sql = 'UPDATE ' . $table . ' SET ';
+
+        foreach ($columns as $key => $column) {
+            $value = is_int($values[$key]) ? $values[$key] : "'{$values[$key]}'";
+            $this->sql .= $column . ' = ' . $value;
+        }
 
         $where = $this->getWhere();
         if (!empty($where)) {
@@ -85,9 +112,9 @@ class FindStatement extends Statement
     }
 
     /**
-     * 执行并返回结果
+     * 执行并返回影响行数
      *
-     * @return array
+     * @return int|boolean
      */
     public function execute() {
         // 生成sql
@@ -96,8 +123,7 @@ class FindStatement extends Statement
         $statement = $this->getStatement();
         // 执行
         $statement->execute();
-        // 获取结果集
-        $result = $statement->fetchAll();
-        return $result;
+        // 返回影响行数
+        return $statement->rowCount();
     }
 }
