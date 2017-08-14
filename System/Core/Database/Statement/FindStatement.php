@@ -51,6 +51,15 @@ class FindStatement extends Statement
     }
 
     /**
+     * 设置绑定参数
+     *
+     * @param array $bind 绑定参数
+     */
+    private function bind(array $bind) {
+        $this->setBind($bind);
+    }
+
+    /**
      * 获取字段
      *
      * @return string

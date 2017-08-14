@@ -42,6 +42,15 @@ class MoveStatement extends Statement
     }
 
     /**
+     * 设置绑定参数
+     *
+     * @param array $bind 绑定参数
+     */
+    private function bind(array $bind) {
+        $this->setBind($bind);
+    }
+
+    /**
      * 生成sql
      */
     protected function makeSql() {

@@ -3,6 +3,7 @@
 namespace Core\Database;
 
 use \PDO;
+use \PDOStatement;
 use Core\Database\Connection;
 
 /**
@@ -46,6 +47,13 @@ class Statement
     protected $value = [];
 
     /**
+     * 绑定参数
+     *
+     * @var array
+     */
+    protected $bind = [];
+
+    /**
      * @var Connection
      */
     protected $connection;
@@ -63,11 +71,11 @@ class Statement
     /**
      * 绑定多个参数
      *
-     * @param  \PDOStatement $statement
+     * @param  PDOStatement $statement
      * @param  array  $bindings
      * @return void
      */
-    protected function bindValues(\PDOStatement $statement, $bindings)
+    protected function bindValues(PDOStatement $statement, $bindings)
     {
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
@@ -111,6 +119,15 @@ class Statement
      */
     protected function setValue(array $value) {
         $this->value = array_merge($this->value, array_values($value));
+    }
+
+    /**
+     * 设置绑定参数
+     *
+     * @param $bind array 绑定参数
+     */
+    protected function setBind(array $bind) {
+        $this->bind = $bind;
     }
 
     /**
@@ -175,8 +192,16 @@ class Statement
      * @return \PDOStatement
      */
     protected function getStatement() {
-        // 预处理sql并返回statement对象
-        return $this->connection->prepare($this->sql());
+        // 预处理sql
+        $statement = $this->connection->prepare($this->sql());
+
+        if (!empty($this->bind)) {
+            // 绑定参数
+            $this->bindValues($statement, $this->bind);
+        }
+
+        // 返回statement对象
+        return $statement;
     }
 
 }
