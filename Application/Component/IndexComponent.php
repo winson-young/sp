@@ -42,6 +42,10 @@ class IndexComponent extends Basic
             'column' => ['customers_firstname', 'customers_gender'],
             'value' => [['testName2', 's'],['testName3', 'l']],
             'table' => 'customers'
+        ]);
+        $result = $this->localDb->move([
+            'table' => 'customers',
+            'where' => "customers_id = 737900109 AND customers_gender = 's'"
         ]);*/
         var_dump($result);exit;
     }

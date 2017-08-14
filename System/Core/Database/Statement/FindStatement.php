@@ -87,7 +87,7 @@ class FindStatement extends Statement
     /**
      * 执行并返回结果
      *
-     * @return array
+     * @return array|boolean
      */
     public function execute() {
         // 生成sql
@@ -95,9 +95,12 @@ class FindStatement extends Statement
         // 获取预处理语句后的statement对象
         $statement = $this->getStatement();
         // 执行
-        $statement->execute();
-        // 获取结果集
-        $result = $statement->fetchAll();
-        return $result;
+        if ($statement->execute()) {
+            // 获取结果集
+            return $statement->fetchAll();
+        } else {
+            return false;
+        }
+
     }
 }

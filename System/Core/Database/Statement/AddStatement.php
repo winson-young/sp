@@ -101,7 +101,9 @@ class AddStatement extends Statement
     }
 
     /**
-     * 执行并返回影响行数
+     * 执行并返回插入结果
+     * 批量插入时，返回插入结果
+     * 单条插入时，返回插入条目自增ID
      *
      * @return int|boolean
      */

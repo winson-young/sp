@@ -5,7 +5,7 @@ namespace Core\Database\Statement;
 use Core\Database\Statement;
 use Core\Database\Connection;
 
-class SaveStatement extends Statement
+class MoveStatement extends Statement
 {
     /**
      * Constructor
@@ -21,16 +21,6 @@ class SaveStatement extends Statement
                 $this->$method($argument);
             }
         }
-    }
-
-    /**
-     * 设置插入数据
-     *
-     * @param array $data 插入数据
-     */
-    private function data(array $data) {
-        $this->setColumns(array_keys($data));
-        $this->setValue(array_values($data));
     }
 
     /**
@@ -55,23 +45,6 @@ class SaveStatement extends Statement
      * 生成sql
      */
     protected function makeSql() {
-        $columns = $this->getColumns();
-        if (empty($columns)) {
-            echo 'Missing columns for insertion';
-            exit;
-        }
-
-        $values = $this->getValue();
-        if (empty($values)) {
-            echo 'Missing value for insertion';
-            exit;
-        }
-
-        // 字段与修改值数量是否对应
-        if (count($columns) !== count($values)) {
-            echo 'Columns\' number not equal to value';
-            exit;
-        }
 
         $table = $this->getTable();
         if (empty($table)) {
@@ -80,12 +53,7 @@ class SaveStatement extends Statement
         }
 
         // 生成sql语句
-        $this->sql = 'UPDATE ' . $table . ' SET ';
-
-        foreach ($columns as $key => $column) {
-            $value = is_int($values[$key]) ? $values[$key] : "'{$values[$key]}'";
-            $this->sql .= $column . ' = ' . $value;
-        }
+        $this->sql = 'DELETE FROM ' . $table;
 
         $where = $this->getWhere();
         if (!empty($where)) {
@@ -94,7 +62,7 @@ class SaveStatement extends Statement
     }
 
     /**
-     * 执行并返回影响行数
+     * 执行删除并返回影响行数
      *
      * @return int|boolean
      */
@@ -108,9 +76,8 @@ class SaveStatement extends Statement
             // 返回影响行数
             return $statement->rowCount();
         } else {
-            // 更新失败
+            // 删除失败
             return false;
         }
-
     }
 }
