@@ -159,6 +159,17 @@ class Statement
     }
 
     /**
+     * 补全插入值
+     *
+     * @param $value int|string 插入值
+     *
+     * @return int|string
+     */
+    protected function valueToString($value) {
+        return is_int($value) ? $value : "'{$value}'";
+    }
+
+    /**
      * 获取PDOStatement执行后的对象
      *
      * @return \PDOStatement

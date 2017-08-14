@@ -5,8 +5,11 @@ namespace Core\Database\Statement;
 use Core\Database\Statement;
 use Core\Database\Connection;
 
-class SaveStatement extends Statement
+class AddStatement extends Statement
 {
+    // 是否批量插入
+    private $batch = false;
+
     /**
      * Constructor
      *
@@ -24,22 +27,27 @@ class SaveStatement extends Statement
     }
 
     /**
-     * 设置插入数据
+     * 设置字段
      *
-     * @param array $data 插入数据
+     * @param array $columns 字段名
      */
-    private function data(array $data) {
-        $this->setColumns(array_keys($data));
-        $this->setValue(array_values($data));
+    private function column(array $columns) {
+        $this->setColumns($columns);
     }
 
     /**
-     * 设置条件
+     * 设置插入值
      *
-     * @param string $where 条件表达式
+     * @param array $value 插入值
      */
-    private function where($where = '') {
-        $this->setWhere($where);
+    private function value(array $value) {
+        if(count($value) === count($value, COUNT_RECURSIVE)) {
+            $value = [$value];
+        } else {
+            // 批量插入
+            $this->batch = true;
+        }
+        $this->setValue($value);
     }
 
     /**
@@ -67,12 +75,6 @@ class SaveStatement extends Statement
             exit;
         }
 
-        // 字段与修改值数量是否对应
-        if (count($columns) !== count($values)) {
-            echo 'Columns\' number not equal to value';
-            exit;
-        }
-
         $table = $this->getTable();
         if (empty($table)) {
             echo 'No table is set for insertion';
@@ -80,17 +82,22 @@ class SaveStatement extends Statement
         }
 
         // 生成sql语句
-        $this->sql = 'UPDATE ' . $table . ' SET ';
+        $this->sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $columns) . ') VALUES ';
 
-        foreach ($columns as $key => $column) {
-            $value = is_int($values[$key]) ? $values[$key] : "'{$values[$key]}'";
-            $this->sql .= $column . ' = ' . $value;
+        foreach ($values as $value) {
+            // 字段与修改值数量是否对应
+            if (count($columns) !== count($value)) {
+                echo 'Columns\' number not equal to value';
+                exit;
+            }
+            $this->sql .= '(';
+            foreach ($value as $item) {
+                $this->sql .= $this->valueToString($item) . ', ';
+            }
+            $this->sql = rtrim($this->sql, ', ');
+            $this->sql .= '), ';
         }
-
-        $where = $this->getWhere();
-        if (!empty($where)) {
-            $this->sql .= ' WHERE ' . $where;
-        }
+        $this->sql = rtrim($this->sql, ', ');
     }
 
     /**
@@ -104,8 +111,12 @@ class SaveStatement extends Statement
         // 获取预处理语句后的statement对象
         $statement = $this->getStatement();
         // 执行
-        $statement->execute();
-        // 返回影响行数
-        return $statement->rowCount();
+        $status = $statement->execute();
+        if ($status && !$this->batch) {
+            // 返回最后插入ID
+            return $this->connection->lastInsertId();
+        } else {
+            return $status;
+        }
     }
 }

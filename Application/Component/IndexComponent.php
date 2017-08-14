@@ -27,17 +27,22 @@ class IndexComponent extends Basic
             'table' => 'customers',
             'where' => 'customers_id = 8041'
         ]);*/
-        $result = $this->localDb->save([
+        /*$result = $this->localDb->save([
             'column' => ['customers_firstname'],
             'value' => ['update_firstname'],
             'table' => 'customers',
             'where' => 'customers_id = 8041'
-        ]);
-        $result = $this->localDb->save([
-            'data' => ['customers_firstname' => 'dataupdate'],
+        ]);*/
+        /*$result = $this->localDb->save([
+            'data' => ['customers_firstname' => 'dataupdate1'],
             'table' => 'customers',
             'where' => 'customers_id = 8041'
         ]);
+        $result = $this->localDb->add([
+            'column' => ['customers_firstname', 'customers_gender'],
+            'value' => [['testName2', 's'],['testName3', 'l']],
+            'table' => 'customers'
+        ]);*/
         var_dump($result);exit;
     }
 			

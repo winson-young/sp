@@ -6,7 +6,7 @@ use Core\Basic;
 use Core\Database\Statement\FindStatement;
 use \PDO;
 
-class Connection extends Basic
+class Connection extends PDO
 {
 
     /**
@@ -19,7 +19,7 @@ class Connection extends Basic
      */
     public function __construct($dsn, $user = null, $password = null, array $options = []) {
         $options = $options + $this->getDefaultOptions();
-        new PDO($dsn, $user, $password, $options);
+        parent::__construct($dsn, $user, $password, $options);
     }
 
     /**
@@ -42,6 +42,12 @@ class Connection extends Basic
      */
     public function __call($name, array $arguments) {
         $className = 'Core\\Database\\Statement\\' . ucfirst($name) . 'Statement';
-        return $this->$className($this, $arguments[0])->execute();
+        if (class_exists($className)) {
+            $statement = new $className($this, $arguments[0]);
+            return $statement->execute();
+        } else {
+            echo 'No such a class to call: ' . var_dump($className, true);
+            exit;
+        }
     }
 }
